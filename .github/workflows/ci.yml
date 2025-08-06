@@ -39,10 +39,14 @@ jobs:
           for i in {1..15}; do
             STATUS=$(curl -s http://selenium-hub:4444/status)
             echo "Status response: $STATUS"
-            echo "$STATUS" | grep '"ready":true' && break
+            if echo "$STATUS" | grep '"ready":true'; then
+              echo "Selenium Grid is ready!"
+              break
+            fi
             echo "Waiting 5 seconds..."
             sleep 5
           done
+        continue-on-error: true
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v4
