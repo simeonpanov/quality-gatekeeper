@@ -16,37 +16,42 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    services:
-      selenium-hub:
-        image: selenium/hub:latest
-        ports:
-          - 4444:4444
-
-      chrome:
-        image: selenium/node-chrome:latest
-        env:
-          SE_EVENT_BUS_HOST: selenium-hub
-          SE_EVENT_BUS_PUBLISH_PORT: 4442
-          SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+
+      - name: Set up Docker network
+        run: docker network create grid || true
+
+      - name: Start Selenium Hub
+        run: |
+          docker run -d --rm --net grid --name selenium-hub \
+            -p 4444:4444 -p 4442:4442 -p 4443:4443 \
+            selenium/hub:latest
+
+      - name: Start Chrome Node
+        run: |
+          docker run -d --rm --net grid --shm-size=2g \
+            -e SE_EVENT_BUS_HOST=selenium-hub \
+            -e SE_EVENT_BUS_PUBLISH_PORT=4442 \
+            -e SE_EVENT_BUS_SUBSCRIBE_PORT=4443 \
+            selenium/node-chrome:latest
 
       - name: Wait for Selenium Grid to be ready
         run: |
           echo "Waiting for Selenium Grid to be ready..."
           for i in {1..15}; do
-            STATUS=$(curl -s http://selenium-hub:4444/status)
-            echo "Status response: $STATUS"
+            STATUS=$(curl -s http://localhost:4444/status)
+            echo "Status: $STATUS"
             if echo "$STATUS" | grep '"ready":true'; then
-              echo "Selenium Grid is ready!"
-              break
+              echo "✅ Selenium Grid is ready."
+              exit 0
             fi
-            echo "Waiting 5 seconds..."
+            echo "⏳ Not ready yet... sleeping 5s"
             sleep 5
           done
-        continue-on-error: true
+          echo "❌ Selenium Grid did not become ready in time"
+          exit 1
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v4
@@ -110,15 +115,27 @@ jobs:
           sudo apt-get install -y openjdk-11-jre
           curl -o allure-2.21.0.zip -L https://github.com/allure-framework/allure2/releases/download/2.21.0/allure-2.21.0.zip
           unzip -o allure-2.21.0.zip -d /opt/
-        env:
-          PATH: ${{ env.PATH }}:/opt/allure-2.21.0/bin
+          export PATH="$PATH:/opt/allure-2.21.0/bin"
+          echo "Allure version:"
+          allure --version
 
       - name: Generate Allure report
         run: |
-          allure generate allure-results/selenium -o allure-results/selenium-report
+          if [ -d "allure-results/selenium" ]; then
+            allure generate allure-results/selenium -o allure-results/selenium-report
+          else
+            echo "❌ Allure results directory not found!"
+            exit 1
+          fi
 
       - name: Upload Allure report
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
           path: allure-results/selenium-report
+
+      - name: Upload ZAP security report
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-security-report
+          path: zap_full_report.html
