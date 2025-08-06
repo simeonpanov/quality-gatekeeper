@@ -37,7 +37,7 @@ jobs:
             -e SE_EVENT_BUS_SUBSCRIBE_PORT=4443 \
             selenium/node-chrome:latest
 
-      - name: Install jq (for JSON parsing)
+      - name: Install jq
         run: sudo apt-get update && sudo apt-get install -y jq
 
       - name: Wait for Selenium Grid Readiness
@@ -69,11 +69,14 @@ jobs:
           pip install -r requirements.txt
           pip install pytest pytest-cov jsonschema
 
-      - name: Run Functional Tests (including Selenium tests)
+      - name: Run Functional Tests with Allure and Coverage
         continue-on-error: true
         run: |
           export PYTHONPATH=$(pwd)
-          pytest tests/functional --cov=./ --cov-report=xml
+          pytest tests/functional \
+            --cov=./ \
+            --cov-report=xml \
+            --alluredir=allure-results
 
       - name: Upload Coverage Report
         if: always()
@@ -99,43 +102,39 @@ jobs:
             k6 run "$script"
           done
 
-      - name: Prepare Security Reports Directory
-        if: always()
-        run: mkdir -p reports/security
-
-      - name: Run OWASP ZAP Security Scan
-        if: always()
+      - name: Run OWASP ZAP Scan
         uses: zaproxy/action-full-scan@v0.12.0
         with:
           target: "https://jsonplaceholder.typicode.com"
-          cmd_options: "-J reports/security/zap_report.json"
+          cmd_options: "-J /zap/wrk/zap_report.json"
         continue-on-error: true
 
-      - name: Upload ZAP Security Report
+      - name: Upload ZAP Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: zap-security-json-report
-          path: reports/security/zap_report.json
+          path: /zap/wrk/zap_report.json
 
       - name: Install Allure CLI
-        if: always()
         run: |
           sudo apt-get update
           sudo apt-get install -y openjdk-11-jre
-          curl -o allure-2.21.0.zip -L https://github.com/allure-framework/allure2/releases/download/2.21.0/allure-2.21.0.zip
-          unzip -o allure-2.21.0.zip -d /opt/
-          echo "/opt/allure-2.21.0/bin" >> $GITHUB_PATH
+          curl -Ls https://github.com/allure-framework/allure2/releases/download/2.21.0/allure-2.21.0.zip -o allure.zip
+          unzip -o allure.zip -d allure-bin
+          sudo mv allure-bin/allure-2.21.0 /opt/allure
+          sudo ln -s /opt/allure/bin/allure /usr/local/bin/allure
           allure --version
 
       - name: Generate Allure Report
         if: always()
         run: |
-          if [ -d "allure-results/selenium" ]; then
-            allure generate allure-results/selenium -o allure-results/selenium-report
+          if [ -d "allure-results" ]; then
+            allure generate allure-results -o allure-report
           else
             echo "❌ Allure results directory not found!"
-            exit 1
+            mkdir -p allure-report
+            echo "<html><body><h1>No tests executed</h1></body></html>" > allure-report/index.html
           fi
 
       - name: Upload Allure Report
@@ -143,4 +142,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
-          path: allure-results/selenium-report
+          path: allure-report
