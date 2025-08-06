@@ -1,131 +1,151 @@
+# QA Quality Gatekeeper
 
-QA Quality Gatekeeper
+This repository contains automated test suites and infrastructure for ensuring software quality through functional UI tests, API testing, performance testing with [k6](https://k6.io/), and security scanning with [OWASP ZAP](https://www.zaproxy.org/).
 
-This repository contains automated test suites and infrastructure for ensuring software quality through functional UI tests, API testing, performance testing with k6, and security scanning with OWASP ZAP.
-Project Structure
+---
 
-    docker-compose.yml — Docker setup for Selenium Grid and related services.
+## 🧪 Functional Selenium Tests
 
-    requirements.txt — Python dependencies.
+UI automation is powered by **Selenium WebDriver** and covers a wide range of real-world scenarios:
 
-    reports/security/ — Security scan reports (e.g., OWASP ZAP).
+- **Alerts**: Handling JavaScript alerts
+- **Authentication**: Basic, Digest, Form-based, Forgot Password flows
+- **Dynamic Content & Controls**: AJAX, dynamic loading, etc.
+- **Editors**: WYSIWYG editor interactions
+- **Elements**: Checkboxes, dropdowns, inputs, add/remove elements
+- **File Management**: File downloads
+- **Frames**: Nested iframe handling
+- **Geolocation**: Mocking geolocation data
+- **Interactions**: Drag-and-drop, context menus, sliders, multiple windows
+- **Keyboard Events**: Key presses and input simulation
+- **Menus**: jQuery UI menu interactions
+- **Notifications**: Entry/exit ads, message popups
+- **Scrolling**: Infinite scroll testing
+- **Shadow DOM**: Component interaction within shadow roots
+- **Tables**: Sortable and dynamic tables
+- **Edge Cases**: Broken images, HTTP status codes, slow-loading resources
 
-    tests/ — Organized test suites:
+> Tests are located in: \`tests/functional/selenium_tests/\`
 
-        functional/selenium_tests/ — UI tests with Selenium WebDriver.
+---
 
-        functional/test_api.py — API backend tests.
+## ⚡ Performance Testing
 
-        performance/ — k6 scripts for load and performance testing.
+Performance and load testing is conducted using **[k6](https://k6.io/)**, an open-source tool for modern performance testing.
 
-        security/ — Security scanning automation scripts.
+The \`performance/\` directory includes scripts that simulate:
+- Load across multiple endpoints
+- Stress testing via POST requests
+- User ramp-up and concurrency patterns
+- Performance benchmarking
 
-Functional Selenium Tests
+Example script: \`performance/performance_test.js\`
 
-Tests cover a broad range of UI scenarios, including:
+---
 
-    Alerts (JavaScript alerts handling)
+## 🔒 Security Scanning
 
-    Authentication (Basic, Digest, Form, Forgot Password)
+Security testing leverages **OWASP ZAP (Zed Attack Proxy)** to identify vulnerabilities.
 
-    Dynamic Content & Controls
+Included tools:
+- \`tests/security/run_zap_scan.py\` — Python script to automate ZAP scans
+- \`tests/security/zap_baseline_scan.sh\` — Baseline shell script for quick security checks
 
-    Editors (WYSIWYG)
+---
 
-    Elements (Checkboxes, dropdowns, inputs, add/remove elements)
+## 🚀 Getting Started
 
-    File management (downloads)
+### Prerequisites
 
-    Frames (including nested)
+Ensure the following are installed:
+- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/)
+- Python 3.8+
+- [k6](https://k6.io/docs/getting-started/installation/)
 
-    Geolocation
+Install Python dependencies:
+\`\`\`bash
+pip install -r requirements.txt
+\`\`\`
 
-    Interactions (drag-and-drop, context menus, sliders, multiple windows)
+---
 
-    Keyboard events
+### Running Selenium Grid Locally
 
-    Menus (jQuery UI)
-
-    Notifications (entry/exit ads, message popups)
-
-    Scrolling (infinite scroll)
-
-    Shadow DOM components
-
-    Tables (sortable data)
-
-    Miscellaneous edge cases (broken images, status codes, slow resources)
-
-Performance Tests
-
-Performance and load testing is done using k6, an open-source load testing tool.
-
-The performance/ folder contains JavaScript scripts that simulate:
-
-    Multiple endpoints load testing
-
-    POST request stress scenarios
-
-    User ramping and concurrency tests
-
-    Overall performance benchmarks
-
-Security Scanning
-
-Security scans leverage OWASP ZAP with:
-
-    Python script: run_zap_scan.py
-
-    Baseline shell script: zap_baseline_scan.sh
-
-    Reports generated under reports/security/
-
-Getting Started
-Prerequisites
-
-    Install Docker and Docker Compose
-
-    Python 3.8+ and install dependencies:
-
-    pip install -r requirements.txt
-
-    Install k6 for performance tests.
-
-Running Selenium Grid Locally
-
-Start Selenium Grid and Chrome node via Docker Compose or manually:
-
+Start the Selenium Grid and Chrome node using Docker Compose:
+\`\`\`bash
 docker-compose up -d
+\`\`\`
 
-Or start containers individually as configured.
-Running Tests
+> This sets up a Selenium Hub with a Chrome browser node ready for testing.
 
-Run Selenium functional tests with:
+To stop:
+\`\`\`bash
+docker-compose down
+\`\`\`
 
+---
+
+### Running Tests
+
+#### Functional UI Tests (Selenium)
+\`\`\`bash
 pytest tests/functional/selenium_tests/
+\`\`\`
 
-Run API tests similarly:
-
+#### API Tests
+\`\`\`bash
 pytest tests/functional/test_api.py
+\`\`\`
 
-Run performance tests with k6, e.g.:
-
+#### Performance Tests (k6)
+\`\`\`bash
 k6 run performance/performance_test.js
+\`\`\`
 
-Run security scans with:
-
+#### Security Scans (OWASP ZAP)
+\`\`\`bash
 python tests/security/run_zap_scan.py
+\`\`\`
 
-CI/CD Integration
+---
 
-    GitHub Actions pipeline (.github/workflows/) automates starting Selenium Grid, waiting for readiness, and running tests.
+## 🔄 CI/CD Integration
 
-    Logs and reports are automatically collected and saved.
+Automated via **GitHub Actions**:
+- Pipeline: \`.github/workflows/ci.yml\`
+- Actions include:
+  - Starting Selenium Grid
+  - Waiting for service readiness
+  - Running functional, performance, and security tests
+  - Collecting logs and reports
 
-Logs and Reports
+All outputs are archived for analysis.
 
-    Test execution logs stored in logs/
+---
 
-    Security reports in reports/security/
+## 📊 Logs and Reports
 
-    Performance test results can be saved under a new reports/performance/ folder
+| Type                  | Location                     |
+|-----------------------|------------------------------|
+| Test Logs             | \`logs/\`                      |
+| Security Reports      | \`reports/security/\`          |
+| Performance Results   | \`reports/performance/\` *(create if needed)* |
+
+---
+
+## 🛠️ Tips
+
+- Always verify Docker containers are healthy before running UI tests.
+- Use \`--headless\` mode in CI for faster execution.
+- Customize k6 scripts to match expected user behavior and traffic patterns.
+- Regularly update ZAP rules and scan policies.
+
+---
+
+## 📚 Learn More
+
+- [Selenium Documentation](https://www.selenium.dev/documentation/)
+- [k6 Documentation](https://k6.io/docs/)
+- [OWASP ZAP User Guide](https://www.zaproxy.org/docs/)
+
+---
