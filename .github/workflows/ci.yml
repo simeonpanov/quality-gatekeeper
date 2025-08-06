@@ -121,6 +121,8 @@ jobs:
         env:
           USE_SELENIUM_GRID: true
         run: |
+          echo "Set PYTHONPATH to repo root"
+          export PYTHONPATH=$(pwd)
           pytest tests/functional/selenium_tests/ --maxfail=0 --disable-warnings -v --alluredir=allure-results/selenium
 
       - name: Install Allure CLI

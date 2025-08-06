@@ -25,11 +25,9 @@ UI automation is powered by **Selenium WebDriver** and covers a wide range of re
 - **Tables**: Sortable and dynamic tables
 - **Edge Cases**: Broken images, HTTP status codes, slow-loading resources
 
-> Tests are located in: \`tests/functional/selenium_tests/\`
-
 ---
 
-## ⚡ Performance Testing
+## ⚡ Performance Testing (k6)
 
 Performance and load testing is conducted using **[k6](https://k6.io/)**, an open-source tool for modern performance testing.
 
@@ -39,17 +37,18 @@ The \`performance/\` directory includes scripts that simulate:
 - User ramp-up and concurrency patterns
 - Performance benchmarking
 
-Example script: \`performance/performance_test.js\`
+📄 Example: `tests/performance/performance_test.js`
+
+Run locally:
+
+```bash
+k6 run tests/performance/performance_test.js
 
 ---
 
 ## 🔒 Security Scanning
 
 Security testing leverages **OWASP ZAP (Zed Attack Proxy)** to identify vulnerabilities.
-
-Included tools:
-- \`tests/security/run_zap_scan.py\` — Python script to automate ZAP scans
-- \`tests/security/zap_baseline_scan.sh\` — Baseline shell script for quick security checks
 
 ---
 
@@ -62,10 +61,10 @@ Ensure the following are installed:
 - Python 3.8+
 - [k6](https://k6.io/docs/getting-started/installation/)
 
-Install Python dependencies:
-\`\`\`bash
+### Install Python dependencies
+```bash
 pip install -r requirements.txt
-\`\`\`
+
 
 ---
 
@@ -125,20 +124,14 @@ All outputs are archived for analysis.
 
 ## 📊 Logs and Reports
 
-| Type                  | Location                     |
-|-----------------------|------------------------------|
-| Test Logs             | \`logs/\`                      |
-| Security Reports      | \`reports/security/\`          |
-| Performance Results   | \`reports/performance/\` *(create if needed)* |
+Test artifacts are uploaded during the CI pipeline and can be accessed from each workflow run in GitHub Actions:
 
----
-
-## 🛠️ Tips
-
-- Always verify Docker containers are healthy before running UI tests.
-- Use \`--headless\` mode in CI for faster execution.
-- Customize k6 scripts to match expected user behavior and traffic patterns.
-- Regularly update ZAP rules and scan policies.
+| Type                | GitHub Actions Artifact Name |
+|---------------------|------------------------------|
+| Test Coverage       | `coverage-report`            |
+| Selenium Test       | `allure-report`              |
+| Security Scan (ZAP) | `zap-security-json-report`   |
+| Performance Tes(k6) | `k6-performance-report`      |
 
 ---
 
