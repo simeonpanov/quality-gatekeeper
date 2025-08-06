@@ -1,5 +1,9 @@
 name: QA Pipeline
 
+permissions:
+  contents: read
+  issues: write
+
 on:
   push:
     branches:
@@ -63,3 +67,26 @@ jobs:
         with:
           name: zap-security-report
           path: reports/security/zap_full_report.html
+
+      - name: Run Selenium tests with Allure
+        run: |
+          pytest tests/functional/selenium_tests/ --maxfail=0 --disable-warnings -v --alluredir=allure-results/selenium
+
+      - name: Install Allure CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-11-jre
+          curl -o allure-2.21.0.zip -L https://github.com/allure-framework/allure2/releases/download/2.21.0/allure-2.21.0.zip
+          unzip -o allure-2.21.0.zip -d /opt/
+        env:
+          PATH: ${{ env.PATH }}:/opt/allure-2.21.0/bin
+
+      - name: Generate Allure report
+        run: |
+          allure generate allure-results/selenium -o allure-results/selenium-report
+
+      - name: Upload Allure report
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-results/selenium-report
