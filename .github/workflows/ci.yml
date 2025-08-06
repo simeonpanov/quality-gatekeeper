@@ -45,16 +45,23 @@ jobs:
           echo "Waiting for Selenium Grid to be ready..."
           for i in {1..15}; do
             STATUS=$(curl -s http://localhost:4444/status)
-            echo "Status: $STATUS"
-            if echo "$STATUS" | grep '"ready":true'; then
+            echo "Raw STATUS: $STATUS"
+            READY=$(echo "$STATUS" | jq -r '.value.ready')
+            echo "Parsed ready status: '$READY'"
+
+            if [ "$READY" = "true" ]; then
               echo "✅ Selenium Grid is ready."
-              exit 0
+              break
             fi
+
             echo "⏳ Not ready yet... sleeping 5s"
             sleep 5
           done
-          echo "❌ Selenium Grid did not become ready in time"
-          exit 1
+
+          if [ "$READY" != "true" ]; then
+            echo "❌ Selenium Grid did not become ready in time"
+            exit 1
+          fi
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v4
