@@ -18,12 +18,19 @@ jobs:
 
     services:
       selenium-hub:
-        image: selenium/hub:4.11.0-20230831
+        image: selenium/hub:4.11.0
         ports:
           - 4444:4444
 
       chrome:
-        image: selenium/node-chrome:4.11.0-20230831
+        image: selenium/node-chrome:4.11.0
+        env:
+          SE_EVENT_BUS_HOST: selenium-hub
+          SE_EVENT_BUS_PUBLISH_PORT: 4442
+          SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
+
+      firefox:
+        image: selenium/node-firefox:4.11.0
         env:
           SE_EVENT_BUS_HOST: selenium-hub
           SE_EVENT_BUS_PUBLISH_PORT: 4442
@@ -37,7 +44,7 @@ jobs:
         run: |
           echo "Waiting for Selenium Grid to be ready..."
           for i in {1..15}; do
-            curl -s http://localhost:4444/status | grep '"ready":true' && break
+            curl -s http://selenium-hub:4444/status | grep '"ready":true' && break
             echo "Waiting 5 seconds..."
             sleep 5
           done
