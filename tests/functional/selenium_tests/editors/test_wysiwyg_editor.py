@@ -1,5 +1,5 @@
 import pytest
-from config.config import logger, driver, pytest_configure
+from tests.functional.selenium_tests.config import logger, driver, pytest_configure
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 

@@ -2,7 +2,7 @@ import pytest
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from config.config import logger, driver, pytest_configure  # Adjust import as necessary
+from tests.functional.selenium_tests.config import logger, driver, pytest_configure
 
 def test_forgot_password(driver):
     logger.info("Navigating to the Forgot Password page.")

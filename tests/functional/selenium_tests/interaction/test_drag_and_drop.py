@@ -1,7 +1,7 @@
 import pytest
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
-from config.config import logger, driver, pytest_configure
+from tests.functional.selenium_tests.config import logger, driver, pytest_configure
 
 
 def test_drag_and_drop(driver):

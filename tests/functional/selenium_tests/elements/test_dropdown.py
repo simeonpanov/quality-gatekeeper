@@ -1,7 +1,7 @@
 import pytest
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
-from config.config import logger, driver, pytest_configure
+from tests.functional.selenium_tests.config import logger, driver, pytest_configure
 
 def test_dropdown_selection(driver):
     """

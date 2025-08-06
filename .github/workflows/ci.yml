@@ -15,10 +15,14 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
+    services:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+
+      - name: Set up Docker Compose Selenium Grid
+        run: |
+          docker-compose up -d
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v4
@@ -68,9 +72,15 @@ jobs:
           name: zap-security-report
           path: reports/security/zap_full_report.html
 
-      - name: Run Selenium tests with Allure
+      - name: Run Selenium tests with Allure using Selenium Grid
+        env:
+          USE_SELENIUM_GRID: true
         run: |
           pytest tests/functional/selenium_tests/ --maxfail=0 --disable-warnings -v --alluredir=allure-results/selenium
+
+      - name: Tear down Docker Compose Selenium Grid
+        if: always()
+        run: docker-compose down
 
       - name: Install Allure CLI
         run: |

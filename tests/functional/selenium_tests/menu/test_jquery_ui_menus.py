@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from config.config import logger, driver, pytest_configure  # Importing the logger from config.py
+from tests.functional.selenium_tests.config import logger, driver, pytest_configure
 
 
 def test_jquery_ui_menu(driver):

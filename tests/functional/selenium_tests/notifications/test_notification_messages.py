@@ -3,7 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
-from config.config import logger, driver, pytest_configure  # Adjust imports as necessary
+from tests.functional.selenium_tests.config import logger, driver, pytest_configure
 import time
 
 
@@ -39,6 +39,3 @@ def test_notification_message(driver):
         logger.error("Initial notification message retrieval failed.")
 
     assert initial_message is not None, "Initial notification message could not be retrieved."
-
-
-

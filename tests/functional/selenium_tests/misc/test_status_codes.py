@@ -1,7 +1,7 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from config.config import logger, driver, pytest_configure
+from tests.functional.selenium_tests.config import logger, driver, pytest_configure
 import pytest
 
 

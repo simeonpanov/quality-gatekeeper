@@ -1,6 +1,6 @@
 import pytest
 from selenium.webdriver.common.by import By
-from config.config import logger, driver, pytest_configure
+from tests.functional.selenium_tests.config import logger, driver, pytest_configure
 import time
 
 def test_dynamic_content(driver):

@@ -6,7 +6,7 @@ import logging
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from config.config import logger, driver, pytest_configure  # Importing the logger from config.py
+from tests.functional.selenium_tests.config import logger, driver, pytest_configure # Importing the logger from config.py
 
 
 def test_file_uploader(driver):
@@ -58,5 +58,3 @@ def test_file_uploader(driver):
     except Exception as e:
         logger.error(f"Error verifying uploaded file name: {e}")
         pytest.fail(f"Error verifying uploaded file name: {e}")
-
-

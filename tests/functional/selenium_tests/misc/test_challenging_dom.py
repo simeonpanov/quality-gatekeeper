@@ -4,7 +4,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import requests
 import time
 import pytest
-from config.config import logger, driver, pytest_configure  # Ensure proper imports for logger and driver
+from tests.functional.selenium_tests.config import logger, driver, pytest_configure
 
 def test_challenging_dom(driver):
     logger.info("Navigating to the Challenging DOM page...")
@@ -73,4 +73,3 @@ def test_challenging_dom(driver):
         logger.info(f"'delete' button in row {i} clicked successfully.")
 
     logger.info("All table content verified and URL fragment checks completed.")
-
