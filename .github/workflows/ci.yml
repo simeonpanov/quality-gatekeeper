@@ -15,14 +15,34 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
     services:
+      selenium-hub:
+        image: selenium/hub:4.11.0-20230831
+        ports:
+          - 4444:4444
+
+      chrome:
+        image: selenium/node-chrome:4.11.0-20230831
+        depends_on:
+          - selenium-hub
+        environment:
+          SE_EVENT_BUS_HOST: selenium-hub
+          SE_EVENT_BUS_PUBLISH_PORT: 4442
+          SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Set up Docker Compose Selenium Grid
+      - name: Wait for Selenium Grid to be ready
         run: |
-          docker-compose up -d
+          echo "Waiting for Selenium Grid to be ready..."
+          for i in {1..15}; do
+            curl -s http://localhost:4444/status | grep '"ready":true' && break
+            echo "Waiting 5 seconds..."
+            sleep 5
+          done
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v4
@@ -77,10 +97,6 @@ jobs:
           USE_SELENIUM_GRID: true
         run: |
           pytest tests/functional/selenium_tests/ --maxfail=0 --disable-warnings -v --alluredir=allure-results/selenium
-
-      - name: Tear down Docker Compose Selenium Grid
-        if: always()
-        run: docker-compose down
 
       - name: Install Allure CLI
         run: |
