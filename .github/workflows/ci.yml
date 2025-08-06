@@ -37,6 +37,9 @@ jobs:
             -e SE_EVENT_BUS_SUBSCRIBE_PORT=4443 \
             selenium/node-chrome:latest
 
+      - name: Install jq (for JSON parsing)
+        run: sudo apt-get update && sudo apt-get install -y jq
+
       - name: Wait for Selenium Grid to be ready
         run: |
           echo "Waiting for Selenium Grid to be ready..."
