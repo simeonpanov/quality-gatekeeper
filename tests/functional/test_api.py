@@ -15,14 +15,25 @@ post_schema = {
     "required": ["userId", "id", "title", "body"]
 }
 
-@pytest.mark.parametrize("post_id", [1, 2, 3, 4, 5])
-def test_get_multiple_posts(post_id):
-    response = requests.get(f"{BASE_URL}/posts/{post_id}")
-    assert response.status_code == 200
-    validate(instance=response.json(), schema=post_schema)
+@pytest.fixture(scope="module")
+def api_client():
+    session = requests.Session()
+    yield session
+    session.close()
 
-def test_create_post():
+def validate_post_schema(data):
+    validate(instance=data, schema=post_schema)
+
+@pytest.mark.functional
+@pytest.mark.parametrize("post_id", [1, 2, 3, 4, 5])
+def test_get_multiple_posts(api_client, post_id):
+    response = api_client.get(f"{BASE_URL}/posts/{post_id}")
+    assert response.status_code == 200
+    validate_post_schema(response.json())
+
+@pytest.mark.functional
+def test_create_post(api_client):
     payload = {"title": "foo", "body": "bar", "userId": 1}
-    response = requests.post(f"{BASE_URL}/posts", json=payload)
+    response = api_client.post(f"{BASE_URL}/posts", json=payload)
     assert response.status_code == 201
-    validate(instance=response.json(), schema=post_schema)
+    validate_post_schema(response.json())
