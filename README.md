@@ -1,87 +1,100 @@
-🛡️ Quality Gatekeeper -- A Full-Stack QA Automation Framework
--------------------------------------------------------------
+🛡️ Quality Gatekeeper --- A Full-Stack QA Automation Framework
+=============================================================
 
-A robust and modular testing framework designed to ensure software quality across **UI, API, performance, and security layers**. This project highlights my capabilities as a QA Engineer in building scalable test systems, integrating automation into CI/CD pipelines, and leveraging Docker-based infrastructure.
-
-* * * * *
-
-🎯 Key Features
----------------
-
--   **Functional UI Testing**: Selenium-based browser automation covering real-world use cases like alerts, frames, user interactions, form inputs, shadow DOM, etc.
-
--   **API Testing**: Validating REST API endpoints using Pytest and Requests.
-
--   **Performance Testing**: Leveraging [k6](https://k6.io/) for load testing and stress simulations.
-
--   **Security Scanning**: Automated vulnerability scans using [OWASP ZAP](https://www.zaproxy.org/).
-
--   **CI/CD Integration**: Fully integrated with GitHub Actions to enable automated test pipelines.
-
--   **Dockerized Infrastructure**: Uses Docker Compose and Selenium Grid to run distributed browser tests locally and in CI.
+This project began as my personal toolkit to tackle complex testing challenges across UI, API, performance, and security layers. Over time, it evolved into a modular, scalable automation framework designed to fit into modern CI/CD pipelines and leverage containerized infrastructure for consistency.
 
 * * * * *
 
-🧪 Functional Testing (Selenium)
---------------------------------
+What It Does
+------------
 
--   Designed using **Pytest** for test structuring and parallel execution.
+Quality Gatekeeper helps you cover all your bases:
 
--   Cross-browser execution via **Selenium Grid**.
+-   **Functional UI Testing:** Browser automation with Selenium, handling tricky real-world stuff like alerts, frames, shadow DOM, infinite scroll, and more.
 
--   Includes advanced scenarios like geolocation mocking, iframe handling, shadow DOM interaction, and infinite scroll.
+-   **API Testing:** Validates REST endpoints using Pytest and Requests.
 
--   Modular configuration and logging to simplify test execution and debugging.
+-   **Performance Testing:** Uses k6 for load and stress testing.
 
-* * * * *
+-   **Security Scanning:** Automated vulnerability checks via OWASP ZAP.
 
-⚙️ Test Architecture Highlights
--------------------------------
+-   **CI/CD Integration:** Seamlessly plugs into GitHub Actions for automated pipelines.
 
--   **Project Structure** promotes separation of concerns (e.g., config, drivers, utilities, test layers).
-
--   **Logging & Reporting** integrated with **Allure** for visual test insights.
-
--   **Environment flexibility** with a toggle for local or remote (Grid) execution via environment variables.
+-   **Dockerized Setup:** Runs everything through Docker Compose and Selenium Grid so you get the same environment locally and in CI.
 
 * * * * *
 
-🚀 DevOps & CI/CD
------------------
+Quick Start / Setup Notes
+-------------------------
 
--   CI pipeline runs on **GitHub Actions**, executing:
+Before diving in, here's what you'll need:
 
-    -   Functional tests via Selenium Grid
+-   Docker and Docker Compose installed locally
 
-    -   API tests with coverage reporting
+-   Chrome and Firefox browsers available for Selenium Grid nodes
 
-    -   Performance tests with k6
+-   A GitHub repository configured to run GitHub Actions (if you want CI)
 
-    -   Security scans via ZAP
+-   Basic Python environment with Pytest and dependencies installed (`requirements.txt` included)
 
--   All test results are archived as artifacts for visibility and traceability.
-
-* * * * *
-
-🐳 Dockerized Test Stack
-------------------------
-
--   All test infrastructure is containerized:
-
-    -   Selenium Grid (Hub + Chrome/Firefox nodes)
-
-    -   OWASP ZAP
-
--   Managed via a **single `docker-compose.yml`**, allowing consistent local/CI environments.
+**TODO:** Add a setup script or Makefile to simplify installation.
 
 * * * * *
 
-📈 Reports & Artifacts (GitHub Actions)
----------------------------------------
+Key Features & Highlights
+-------------------------
 
-| Report Type | Artifact Name |
-| --- | --- |
-| Coverage Report | `coverage-report` |
-| UI Test Report | `allure-report` |
-| k6 Load Results | `k6-performance-report` |
-| ZAP Scan Report | `zap-security-json-report` |
+### Functional Testing (Selenium)
+
+-   Built with Pytest for clean test structure and parallel runs.
+
+-   Runs cross-browser tests on Selenium Grid (Chrome & Firefox).
+
+-   Handles advanced scenarios like geolocation mocking, iframe interactions, shadow DOM, alerts, and infinite scroll.
+
+-   Modular configs and detailed logging help troubleshoot flaky tests quickly.
+
+### API Testing
+
+-   Validates REST APIs using Requests and Pytest.
+
+-   Easy to extend with new endpoints or test cases.
+
+### Performance Testing
+
+-   Load testing with k6, designed to simulate realistic traffic and stress scenarios.
+
+### Security Scanning
+
+-   OWASP ZAP runs automated vulnerability scans during your test pipeline.
+
+-   Reports help catch security issues early.
+
+### CI/CD Integration
+
+-   GitHub Actions workflows run your UI, API, performance, and security tests automatically.
+
+-   Test results are saved as artifacts for later review.
+
+### Dockerized Test Stack
+
+-   All services run inside Docker containers:
+
+    -   Selenium Grid Hub + browser nodes
+
+    -   OWASP ZAP scanner
+
+-   Managed by a single `docker-compose.yml` file, so setup is consistent everywhere.
+
+* * * * *
+
+Architecture Notes
+------------------
+
+-   Clean separation of concerns (config, drivers, utilities, tests).
+
+-   Allure reporting for rich visual test reports.
+
+-   Flexible environment setup --- switch between local and remote Grid easily via environment variables.
+
+* * * * *
