@@ -1,4 +1,4 @@
-# QA Quality Gatekeeper
+# Quality Gatekeeper
 
 This repository contains automated test suites and infrastructure for ensuring software quality through functional UI tests, API testing, performance testing with [k6](https://k6.io/), and security scanning with [OWASP ZAP](https://www.zaproxy.org/).
 
@@ -38,11 +38,6 @@ The \`performance/\` directory includes scripts that simulate:
 - Performance benchmarking
 
 📄 Example: `tests/performance/performance_test.js`
-
-Run locally:
-
-```bash
-k6 run tests/performance/performance_test.js
 
 ---
 

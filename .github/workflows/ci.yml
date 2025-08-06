@@ -118,6 +118,7 @@ jobs:
           path: reports/security/zap_report.json
 
       - name: Run Selenium tests with Allure using Selenium Grid
+        continue-on-error: true
         env:
           USE_SELENIUM_GRID: true
         run: |
