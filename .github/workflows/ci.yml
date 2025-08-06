@@ -106,15 +106,15 @@ jobs:
         uses: zaproxy/action-full-scan@v0.12.0
         with:
           target: "https://jsonplaceholder.typicode.com"
-          cmd_options: "-J /zap/wrk/zap_report.json"
+          cmd_options: "-J zap_report.json" # save report in current working dir
         continue-on-error: true
 
-      - name: Upload ZAP Report
+      - name: Upload ZAP report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: zap-security-json-report
-          path: /zap/wrk/zap_report.json
+          path: zap_report.json
 
       - name: Install Allure CLI
         run: |
