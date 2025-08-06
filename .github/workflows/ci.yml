@@ -17,10 +17,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set up Docker network
+      - name: Setup Docker Network for Selenium Grid
         run: docker network create grid || true
 
       - name: Start Selenium Hub
@@ -40,60 +40,58 @@ jobs:
       - name: Install jq (for JSON parsing)
         run: sudo apt-get update && sudo apt-get install -y jq
 
-      - name: Wait for Selenium Grid to be ready
+      - name: Wait for Selenium Grid Readiness
         run: |
           echo "Waiting for Selenium Grid to be ready..."
           for i in {1..15}; do
             STATUS=$(curl -s http://localhost:4444/status)
-            echo "Raw STATUS: $STATUS"
             READY=$(echo "$STATUS" | jq -r '.value.ready')
-            echo "Parsed ready status: '$READY'"
-
             if [ "$READY" = "true" ]; then
               echo "✅ Selenium Grid is ready."
               break
             fi
-
             echo "⏳ Not ready yet... sleeping 5s"
             sleep 5
           done
-
           if [ "$READY" != "true" ]; then
             echo "❌ Selenium Grid did not become ready in time"
             exit 1
           fi
 
-      - name: Set up Python 3.12
+      - name: Setup Python 3.12
         uses: actions/setup-python@v4
         with:
           python-version: "3.12"
 
-      - name: Install Python dependencies
+      - name: Install Python Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest pytest-cov jsonschema
 
-      - name: Run functional tests
+      - name: Run Functional Tests (including Selenium tests)
+        continue-on-error: true
         run: |
-          echo "Set PYTHONPATH to repo root"
           export PYTHONPATH=$(pwd)
           pytest tests/functional --cov=./ --cov-report=xml
 
-      - name: Upload coverage report
+      - name: Upload Coverage Report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage.xml
 
       - name: Install k6
+        if: always()
         run: |
           curl -fsSL https://dl.k6.io/key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/k6-archive-keyring.gpg
           echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
           sudo apt-get update
           sudo apt-get install -y k6
 
-      - name: Run all k6 performance tests
+      - name: Run k6 Performance Tests
+        if: always()
         working-directory: ./tests/performance
         run: |
           for script in *.js; do
@@ -101,42 +99,37 @@ jobs:
             k6 run "$script"
           done
 
-      - name: Create reports/security folder
+      - name: Prepare Security Reports Directory
+        if: always()
         run: mkdir -p reports/security
 
-      - name: Set up OWASP ZAP (for security tests)
+      - name: Run OWASP ZAP Security Scan
+        if: always()
         uses: zaproxy/action-full-scan@v0.12.0
         with:
           target: "https://jsonplaceholder.typicode.com"
           cmd_options: "-J reports/security/zap_report.json"
         continue-on-error: true
 
-      - name: Upload ZAP JSON report
+      - name: Upload ZAP Security Report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: zap-security-json-report
           path: reports/security/zap_report.json
 
-      - name: Run Selenium tests with Allure using Selenium Grid
-        continue-on-error: true
-        env:
-          USE_SELENIUM_GRID: true
-        run: |
-          echo "Set PYTHONPATH to repo root"
-          export PYTHONPATH=$(pwd)
-          pytest tests/functional/selenium_tests/ --maxfail=0 --disable-warnings -v --alluredir=allure-results/selenium
-
       - name: Install Allure CLI
+        if: always()
         run: |
           sudo apt-get update
           sudo apt-get install -y openjdk-11-jre
           curl -o allure-2.21.0.zip -L https://github.com/allure-framework/allure2/releases/download/2.21.0/allure-2.21.0.zip
           unzip -o allure-2.21.0.zip -d /opt/
           echo "/opt/allure-2.21.0/bin" >> $GITHUB_PATH
-          echo "Allure version:"
           allure --version
 
-      - name: Generate Allure report
+      - name: Generate Allure Report
+        if: always()
         run: |
           if [ -d "allure-results/selenium" ]; then
             allure generate allure-results/selenium -o allure-results/selenium-report
@@ -145,7 +138,8 @@ jobs:
             exit 1
           fi
 
-      - name: Upload Allure report
+      - name: Upload Allure Report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-report

@@ -1,139 +1,87 @@
-# Quality Gatekeeper
+🛡️ Quality Gatekeeper -- A Full-Stack QA Automation Framework
+-------------------------------------------------------------
 
-This repository contains automated test suites and infrastructure for ensuring software quality through functional UI tests, API testing, performance testing with [k6](https://k6.io/), and security scanning with [OWASP ZAP](https://www.zaproxy.org/).
+A robust and modular testing framework designed to ensure software quality across **UI, API, performance, and security layers**. This project highlights my capabilities as a QA Engineer in building scalable test systems, integrating automation into CI/CD pipelines, and leveraging Docker-based infrastructure.
 
----
+* * * * *
 
-## 🧪 Functional Selenium Tests
+🎯 Key Features
+---------------
 
-UI automation is powered by **Selenium WebDriver** and covers a wide range of real-world scenarios:
+-   **Functional UI Testing**: Selenium-based browser automation covering real-world use cases like alerts, frames, user interactions, form inputs, shadow DOM, etc.
 
-- **Alerts**: Handling JavaScript alerts
-- **Authentication**: Basic, Digest, Form-based, Forgot Password flows
-- **Dynamic Content & Controls**: AJAX, dynamic loading, etc.
-- **Editors**: WYSIWYG editor interactions
-- **Elements**: Checkboxes, dropdowns, inputs, add/remove elements
-- **File Management**: File downloads
-- **Frames**: Nested iframe handling
-- **Geolocation**: Mocking geolocation data
-- **Interactions**: Drag-and-drop, context menus, sliders, multiple windows
-- **Keyboard Events**: Key presses and input simulation
-- **Menus**: jQuery UI menu interactions
-- **Notifications**: Entry/exit ads, message popups
-- **Scrolling**: Infinite scroll testing
-- **Shadow DOM**: Component interaction within shadow roots
-- **Tables**: Sortable and dynamic tables
-- **Edge Cases**: Broken images, HTTP status codes, slow-loading resources
+-   **API Testing**: Validating REST API endpoints using Pytest and Requests.
 
----
+-   **Performance Testing**: Leveraging [k6](https://k6.io/) for load testing and stress simulations.
 
-## ⚡ Performance Testing (k6)
+-   **Security Scanning**: Automated vulnerability scans using [OWASP ZAP](https://www.zaproxy.org/).
 
-Performance and load testing is conducted using **[k6](https://k6.io/)**, an open-source tool for modern performance testing.
+-   **CI/CD Integration**: Fully integrated with GitHub Actions to enable automated test pipelines.
 
-The \`performance/\` directory includes scripts that simulate:
-- Load across multiple endpoints
-- Stress testing via POST requests
-- User ramp-up and concurrency patterns
-- Performance benchmarking
+-   **Dockerized Infrastructure**: Uses Docker Compose and Selenium Grid to run distributed browser tests locally and in CI.
 
-📄 Example: `tests/performance/performance_test.js`
+* * * * *
 
----
+🧪 Functional Testing (Selenium)
+--------------------------------
 
-## 🔒 Security Scanning
+-   Designed using **Pytest** for test structuring and parallel execution.
 
-Security testing leverages **OWASP ZAP (Zed Attack Proxy)** to identify vulnerabilities.
+-   Cross-browser execution via **Selenium Grid**.
 
----
+-   Includes advanced scenarios like geolocation mocking, iframe handling, shadow DOM interaction, and infinite scroll.
 
-## 🚀 Getting Started
+-   Modular configuration and logging to simplify test execution and debugging.
 
-### Prerequisites
+* * * * *
 
-Ensure the following are installed:
-- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/)
-- Python 3.8+
-- [k6](https://k6.io/docs/getting-started/installation/)
+⚙️ Test Architecture Highlights
+-------------------------------
 
-### Install Python dependencies
-```bash
-pip install -r requirements.txt
+-   **Project Structure** promotes separation of concerns (e.g., config, drivers, utilities, test layers).
 
+-   **Logging & Reporting** integrated with **Allure** for visual test insights.
 
----
+-   **Environment flexibility** with a toggle for local or remote (Grid) execution via environment variables.
 
-### Running Selenium Grid Locally
+* * * * *
 
-Start the Selenium Grid and Chrome node using Docker Compose:
-\`\`\`bash
-docker-compose up -d
-\`\`\`
+🚀 DevOps & CI/CD
+-----------------
 
-> This sets up a Selenium Hub with a Chrome browser node ready for testing.
+-   CI pipeline runs on **GitHub Actions**, executing:
 
-To stop:
-\`\`\`bash
-docker-compose down
-\`\`\`
+    -   Functional tests via Selenium Grid
 
----
+    -   API tests with coverage reporting
 
-### Running Tests
+    -   Performance tests with k6
 
-#### Functional UI Tests (Selenium)
-\`\`\`bash
-pytest tests/functional/selenium_tests/
-\`\`\`
+    -   Security scans via ZAP
 
-#### API Tests
-\`\`\`bash
-pytest tests/functional/test_api.py
-\`\`\`
+-   All test results are archived as artifacts for visibility and traceability.
 
-#### Performance Tests (k6)
-\`\`\`bash
-k6 run performance/performance_test.js
-\`\`\`
+* * * * *
 
-#### Security Scans (OWASP ZAP)
-\`\`\`bash
-python tests/security/run_zap_scan.py
-\`\`\`
+🐳 Dockerized Test Stack
+------------------------
 
----
+-   All test infrastructure is containerized:
 
-## 🔄 CI/CD Integration
+    -   Selenium Grid (Hub + Chrome/Firefox nodes)
 
-Automated via **GitHub Actions**:
-- Pipeline: \`.github/workflows/ci.yml\`
-- Actions include:
-  - Starting Selenium Grid
-  - Waiting for service readiness
-  - Running functional, performance, and security tests
-  - Collecting logs and reports
+    -   OWASP ZAP
 
-All outputs are archived for analysis.
+-   Managed via a **single `docker-compose.yml`**, allowing consistent local/CI environments.
 
----
+* * * * *
 
-## 📊 Logs and Reports
+📈 Reports & Artifacts (GitHub Actions)
+---------------------------------------
 
-Test artifacts are uploaded during the CI pipeline and can be accessed from each workflow run in GitHub Actions:
-
-| Type                | GitHub Actions Artifact Name |
-|---------------------|------------------------------|
-| Test Coverage       | `coverage-report`            |
-| Selenium Test       | `allure-report`              |
-| Security Scan (ZAP) | `zap-security-json-report`   |
-| Performance Tes(k6) | `k6-performance-report`      |
-
----
-
-## 📚 Learn More
-
-- [Selenium Documentation](https://www.selenium.dev/documentation/)
-- [k6 Documentation](https://k6.io/docs/)
-- [OWASP ZAP User Guide](https://www.zaproxy.org/docs/)
-
----
+| Report Type | Artifact Name |
+| --- | --- |
+| Coverage Report | `coverage-report` |
+| UI Test Report | `allure-report` |
+| k6 Load Results | `k6-performance-report` |
+| ZAP Scan Report | `zap-security-json-report` |
